@@ -6,49 +6,92 @@ function ImageUpload() {
   const [imageURL, setImageURL] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+const [hasSearched, setHasSearched] = useState(false);
 
-  const handleSubmit = async (e) => {
+//   const handleSubmit = async (e) => {
     
-    e.preventDefault();
+//     e.preventDefault();
     
-    if (!file && !imageURL) {
-      return alert('Please upload an image or paste an image URL.');
+//     if (!file && !imageURL) {
+//       return alert('Please upload an image or paste an image URL.');
+//     }
+    
+//     setLoading(true);
+// // push 
+//     try {
+//       let res;
+//       if (file) {
+//         const formData = new FormData();
+//         formData.append('image', file);
+
+//         res = await axios.post(
+//           `https://tool-beta.vercel.app/api/images/reverse-search`,
+//           formData,
+//           {
+//             headers: { 'Content-Type': 'multipart/form-data' },
+//           }
+//         );
+//       } else {
+//         res = await axios.post(
+//           `https://tool-beta.vercel.app/api/images/url-search`,
+//           {
+//             imageUrl: imageURL,
+//           }
+//         );
+//       }
+
+//       console.log('API response:', res.data);
+//       // Backend returns { similarPeople, others, originalResults }
+//       setResults(res.data.originalResults || []);
+//     } catch (err) {
+//       console.error(err);
+//       alert('Reverse image search failed.');
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  if (!file && !imageURL) {
+    return alert('Please upload an image or paste an image URL.');
+  }
+
+  setLoading(true);
+  setHasSearched(true); // Set this to true when a search is performed
+
+  try {
+    let res;
+    if (file) {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      res = await axios.post(
+        `https://tool-beta.vercel.app/api/images/reverse-search`,
+        formData,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        }
+      );
+    } else {
+      res = await axios.post(
+        `https://tool-beta.vercel.app/api/images/url-search`,
+        {
+          imageUrl: imageURL,
+        }
+      );
     }
-    
-    setLoading(true);
-// push 
-    try {
-      let res;
-      if (file) {
-        const formData = new FormData();
-        formData.append('image', file);
 
-        res = await axios.post(
-          `https://tool-beta.vercel.app/api/images/reverse-search`,
-          formData,
-          {
-            headers: { 'Content-Type': 'multipart/form-data' },
-          }
-        );
-      } else {
-        res = await axios.post(
-          `https://tool-beta.vercel.app/api/images/url-search`,
-          {
-            imageUrl: imageURL,
-          }
-        );
-      }
-
-      console.log('API response:', res.data);
-      // Backend returns { similarPeople, others, originalResults }
-      setResults(res.data.originalResults || []);
-    } catch (err) {
-      console.error(err);
-      alert('Reverse image search failed.');
-    } finally {
-      setLoading(false);
-    }
-  };
+    console.log('API response:', res.data);
+    setResults(res.data.originalResults || []);
+  } catch (err) {
+    console.error(err);
+    alert('Reverse image search failed.');
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className='min-h-screen bg-gradient-to-b from-[#f8f9fa] to-[#e9ecef] flex flex-col items-center justify-center p-4'>
@@ -113,28 +156,36 @@ function ImageUpload() {
       </div>
 
       {/* Results */}
-      {results.length > 0 ? (
-        <div className='mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-6xl'>
-          {results.map((item, index) => (
-            <a
-              href={item.link}
-              key={index}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='bg-white p-4 rounded-xl shadow hover:shadow-md transition border border-gray-200'
-            >
-              <img
-                src={item.highResImage || item.thumbnail}
-                alt={item.title}
-                className='w-full h-96 object-cover rounded-md mb-2'
-              />
-              <p className='text-sm font-medium text-gray-700'>{item.title}</p>
-            </a>
-          ))}
-        </div>
+      {hasSearched ? (
+        results.length > 0 ? (
+          <div className='mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-6xl'>
+            {results.map((item, index) => (
+              <a
+                href={item.link}
+                key={index}
+                target='_blank'
+                rel='noopener noreferrer'
+                className='bg-white p-4 rounded-xl shadow hover:shadow-md transition border border-gray-200'
+              >
+                <img
+                  src={item.highResImage || item.thumbnail}
+                  alt={item.title}
+                  className='w-full h-96 object-cover rounded-md mb-2'
+                />
+                <p className='text-sm font-medium text-gray-700'>
+                  {item.title}
+                </p>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <p className='text-center text-red-600 mt-10 mb-12 text-2xl'>
+            No results found for this image.
+          </p>
+        )
       ) : (
-        <p className='text-center text-red-600 mt-10 mb-12 text-2xl'>
-          No results found for this image.
+        <p className='text-center text-gray-500 mt-10 mb-12 text-xl'>
+          Search your images with this tool.
         </p>
       )}
     </div>
