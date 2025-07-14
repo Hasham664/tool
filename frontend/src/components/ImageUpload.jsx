@@ -8,14 +8,16 @@ function ImageUpload() {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
+    
     e.preventDefault();
-
+    
     if (!file && !imageURL) {
       return alert('Please upload an image or paste an image URL.');
     }
-
+    
     setLoading(true);
-    const BACKEND_KEY = process.env.REACT_APP_BACKEND_KEY;
+const BACKEND_KEY = import.meta.env.VITE_BACKEND_KEY;
+    console.log('Backend Key:', BACKEND_KEY);
 
     try {
       let res;
