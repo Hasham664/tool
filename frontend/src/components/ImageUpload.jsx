@@ -113,7 +113,7 @@ function ImageUpload() {
       </div>
 
       {/* Results */}
-      {results.length > 0 && (
+      {results.length > 0 ? (
         <div className='mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 w-full max-w-6xl'>
           {results.map((item, index) => (
             <a
@@ -132,6 +132,10 @@ function ImageUpload() {
             </a>
           ))}
         </div>
+      ) : (
+        <p className='text-center text-gray-500 mt-10 text-lg'>
+          No results found for this image.
+        </p>
       )}
     </div>
   );
