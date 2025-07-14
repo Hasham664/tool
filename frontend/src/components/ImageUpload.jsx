@@ -16,8 +16,6 @@ function ImageUpload() {
     }
     
     setLoading(true);
-const BACKEND_KEY = import.meta.env.VITE_BACKEND_KEY;
-    console.log('Backend Key:', BACKEND_KEY);
 // push 
     try {
       let res;
@@ -26,16 +24,19 @@ const BACKEND_KEY = import.meta.env.VITE_BACKEND_KEY;
         formData.append('image', file);
 
         res = await axios.post(
-          `${BACKEND_KEY}/api/images/reverse-search`,
+          `https://tool-beta.vercel.app/api/images/reverse-search`,
           formData,
           {
             headers: { 'Content-Type': 'multipart/form-data' },
           }
         );
       } else {
-        res = await axios.post(`${BACKEND_KEY}/api/images/url-search`, {
-          imageUrl: imageURL,
-        });
+        res = await axios.post(
+          `https://tool-beta.vercel.app/api/images/url-search`,
+          {
+            imageUrl: imageURL,
+          }
+        );
       }
 
       console.log('API response:', res.data);
