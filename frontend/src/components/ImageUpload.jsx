@@ -15,6 +15,7 @@ function ImageUpload() {
     }
 
     setLoading(true);
+    const BACKEND_KEY = process.env.REACT_APP_BACKEND_KEY;
 
     try {
       let res;
@@ -23,14 +24,14 @@ function ImageUpload() {
         formData.append('image', file);
 
         res = await axios.post(
-          'http://localhost:4000/api/images/reverse-search',
+          `${BACKEND_KEY}/api/images/reverse-search`,
           formData,
           {
             headers: { 'Content-Type': 'multipart/form-data' },
           }
         );
       } else {
-        res = await axios.post('http://localhost:4000/api/images/url-search', {
+        res = await axios.post(`${BACKEND_KEY}/api/images/url-search`, {
           imageUrl: imageURL,
         });
       }
